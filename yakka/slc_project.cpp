@@ -22,52 +22,50 @@
 
 void slc_project::resolve_project(std::unordered_set<std::string> components)
 {
-    std::vector<std::string> unsatisified_requirements;
-    std::unordered_set<std::string> requires;
-    std::unordered_set<std::string> provides;
+  std::vector<std::string> unsatisified_requirements;
+  std::unordered_set<std::string>
+  requires;
+  std::unordered_set<std::string> provides;
 
-    // Get the list of unsatisified requirements
-    std::set_difference(requires.begin(), requires.end(), provides.begin(), provides.end(), std::inserter(unsatisified_requirements, unsatisified_requirements.begin()));
+  // Get the list of unsatisified requirements
+  std::set_difference(requires.begin(), requires.end(), provides.begin(), provides.end(), std::inserter(unsatisified_requirements, unsatisified_requirements.begin()));
 
-    for (const auto& r: unsatisified_requirements)
-    {
-        // Get all the components that provide the requirement
-        auto p = provided_requirements.equal_range(r);
-        for (auto i = p.first; i != p.second; ++i)
-        {
-            // Check conditions of 
-        }
+  for (const auto &r: unsatisified_requirements) {
+    // Get all the components that provide the requirement
+    auto p = provided_requirements.equal_range(r);
+    for (auto i = p.first; i != p.second; ++i) {
+      // Check conditions of
     }
+  }
 }
 
 void slc_project::generate_slcc_database(const std::string path)
 {
-    std::vector<std::future<YAML::Node>> parsed_slcc_files;
-    for (const auto& p: std::filesystem::recursive_directory_iterator(path))
-    {
-        if (p.path().filename().extension() == ".slcc")
-        {
-            parsed_slcc_files.push_back( std::async(std::launch::async, [](std::string path) -> YAML::Node {
-                    try {
-                        return YAML::LoadFile( path );
-                    } catch(...) {
-                        return {};
-                    }
-                }, p.path().generic_string()));
-        }
+  std::vector<std::future<YAML::Node>> parsed_slcc_files;
+  for (const auto &p: std::filesystem::recursive_directory_iterator(path)) {
+    if (p.path().filename().extension() == ".slcc") {
+      parsed_slcc_files.push_back(std::async(
+        std::launch::async,
+        [](std::string path) -> YAML::Node {
+          try {
+            return YAML::LoadFile(path);
+          } catch (...) {
+            return {};
+          }
+        },
+        p.path().generic_string()));
     }
+  }
 
-    for (const auto& i: parsed_slcc_files)
-    {
-        YAML::Node result = i.wait().value();
-        if (!result.IsNull())
-        {
-            // Add component to the database
-            slcc_database[result["name"].as<std::string>()] = result;
-            
-            // Extra the 'provides' into the universal multimap
-            for (const auto& p: result["provides"])
-                provided_requirements.insert( {p.as<std::string>(), result} );
-        }
+  for (const auto &i: parsed_slcc_files) {
+    YAML::Node result = i.wait().value();
+    if (!result.IsNull()) {
+      // Add component to the database
+      slcc_database[result["name"].as<std::string>()] = result;
+
+      // Extra the 'provides' into the universal multimap
+      for (const auto &p: result["provides"])
+        provided_requirements.insert({ p.as<std::string>(), result });
     }
+  }
 }
