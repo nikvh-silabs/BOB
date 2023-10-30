@@ -1,0 +1,122 @@
+name: OpenSSL Core
+
+
+includes:
+  local:
+    - include
+    - providers/common/include
+    - providers/implementations/include
+    - crypto/evp
+    - .
+
+defines:
+  local:
+    - OPENSSLDIR=\".\"
+    - ENGINESDIR=\"engines-3\"
+    - MODULESDIR=\"ossl-modules\"
+    - "OPENSSL_PIC"
+    - "OPENSSL_BUILDING_OPENSSL"
+    - OPENSSL_NO_DEPRECATED_3_0
+    - "L_ENDIAN"
+    - "UNICODE"
+    - "_UNICODE"
+    - "NDEBUG"
+
+supports:
+  components:
+    msvc:
+      defines:
+        local:
+          - WIN32_LEAN_AND_MEAN
+          - "OPENSSL_SYS_WIN32"
+          - "_CRT_SECURE_NO_DEPRECATE"
+          - "_WINSOCK_DEPRECATED_NO_WARNINGS"
+      flags:
+        c:
+          local:
+            - /Zi
+            - /MT /Zl /Gs0 /GF /Gy /W3 /wd4090 /nologo
+            - /O2
+            - /Fdossl_static.pdb
+
+sources:
+  - ssl\bio_ssl.c
+  - ssl\d1_lib.c
+  - ssl\d1_msg.c
+  - ssl\d1_srtp.c
+  - ssl\event_queue.c
+  - ssl\methods.c
+  - ssl\pqueue.c
+  - ssl\priority_queue.c
+  - ssl\s3_enc.c
+  - ssl\s3_lib.c
+  - ssl\s3_msg.c
+  - ssl\ssl_asn1.c
+  - ssl\ssl_cert.c
+  - ssl\ssl_cert_comp.c
+  - ssl\ssl_ciph.c
+  - ssl\ssl_conf.c
+  - ssl\ssl_err.c
+  - ssl\ssl_err_legacy.c
+  - ssl\ssl_init.c
+  - ssl\ssl_lib.c
+  - ssl\ssl_mcnf.c
+  - ssl\ssl_rsa.c
+  - ssl\ssl_rsa_legacy.c
+  - ssl\ssl_sess.c
+  - ssl\ssl_stat.c
+  - ssl\ssl_txt.c
+  - ssl\ssl_utst.c
+  - ssl\t1_enc.c
+  - ssl\t1_lib.c
+  - ssl\t1_trce.c
+  - ssl\tls13_enc.c
+  - ssl\tls_depr.c
+  - ssl\tls_srp.c
+  - ssl\quic\cc_newreno.c
+  - ssl\quic\quic_ackm.c
+  - ssl\quic\quic_cfq.c
+  - ssl\quic\quic_channel.c
+  - ssl\quic\quic_demux.c
+  - ssl\quic\quic_fc.c
+  - ssl\quic\quic_fifd.c
+  - ssl\quic\quic_impl.c
+  - ssl\quic\quic_method.c
+  - ssl\quic\quic_reactor.c
+  - ssl\quic\quic_record_rx.c
+  - ssl\quic\quic_record_shared.c
+  - ssl\quic\quic_record_tx.c
+  - ssl\quic\quic_record_util.c
+  - ssl\quic\quic_rstream.c
+  - ssl\quic\quic_rx_depack.c
+  - ssl\quic\quic_sf_list.c
+  - ssl\quic\quic_sstream.c
+  - ssl\quic\quic_statm.c
+  - ssl\quic\quic_stream_map.c
+  - ssl\quic\quic_thread_assist.c
+  - ssl\quic\quic_tls.c
+  - ssl\quic\quic_trace.c
+  - ssl\quic\quic_tserver.c
+  - ssl\quic\quic_txp.c
+  - ssl\quic\quic_txpim.c
+  - ssl\quic\quic_wire.c
+  - ssl\quic\quic_wire_pkt.c
+  - ssl\quic\uint_set.c
+  - ssl\record\rec_layer_d1.c
+  - ssl\record\rec_layer_s3.c
+  - ssl\record\methods\dtls_meth.c
+  - ssl\record\methods\ssl3_meth.c
+  - ssl\record\methods\tls13_meth.c
+  - ssl\record\methods\tls1_meth.c
+  - ssl\record\methods\tls_common.c
+  - ssl\record\methods\tls_multib.c
+  - ssl\record\methods\tlsany_meth.c
+  - ssl\statem\extensions.c
+  - ssl\statem\extensions_clnt.c
+  - ssl\statem\extensions_cust.c
+  - ssl\statem\extensions_srvr.c
+  - ssl\statem\statem.c
+  - ssl\statem\statem_clnt.c
+  - ssl\statem\statem_dtls.c
+  - ssl\statem\statem_lib.c
+  - ssl\statem\statem_srvr.c

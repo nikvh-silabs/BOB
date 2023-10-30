@@ -1,0 +1,20 @@
+name: OpenSSL
+
+flags:
+  ld:
+    global:
+      - -LIBPATH:"{{curdir()}}"
+
+libraries:
+  - libssl.lib
+  - libcrypto.lib
+
+blueprints:
+  build:
+    process:
+      - execute: 'yakka-{{configuration.host_os}} -p openssl_libraries librarify! openssl_core openssl_crypto msvc nasm'
+      - copy:
+          source:
+            - 'output/openssl_libraries/openssl_crypto.lib'
+            - 'output/openssl_libraries/openssl_core.lib'
+          destination: '{{curdir()}}'

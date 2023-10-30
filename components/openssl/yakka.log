@@ -1,0 +1,25 @@
+[2023-10-26 13:32:35.170] [yakkalog] [info] Found .\openssl.yakka
+[2023-10-26 13:32:35.171] [yakkalog] [info] Found .\openssl_common.yakka
+[2023-10-26 13:32:35.171] [yakkalog] [info] Found .\openssl_crypto.yakka
+[2023-10-26 13:32:35.171] [yakkalog] [info] Found .\openssl_default.yakka
+[2023-10-26 13:32:35.244] [yakkalog] [info] Parsing './openssl.yakka'
+[2023-10-26 13:32:35.247] [yakkalog] [info] Scanning workspace to find missing components
+[2023-10-26 13:32:35.425] [yakkalog] [info] Found .\openssl.yakka
+[2023-10-26 13:32:35.425] [yakkalog] [info] Found .\openssl_common.yakka
+[2023-10-26 13:32:35.425] [yakkalog] [info] Found .\openssl_crypto.yakka
+[2023-10-26 13:32:35.425] [yakkalog] [info] Found .\openssl_default.yakka
+[2023-10-26 13:32:35.493] [yakkalog] [info] Found c:\silabs\.yakka\repos\clang\clang.yakka
+[2023-10-26 13:32:35.493] [yakkalog] [info] Found c:\silabs\.yakka\repos\clang-format\clang-format.bob
+[2023-10-26 13:32:35.494] [yakkalog] [info] Found c:\silabs\.yakka\repos\clang-tidy\clang-tidy.bob
+[2023-10-26 13:32:35.495] [yakkalog] [info] Found c:\silabs\.yakka\repos\commander\commander.bob
+[2023-10-26 13:32:35.498] [yakkalog] [info] Found c:\silabs\.yakka\repos\conan\conan.yakka
+[2023-10-26 13:32:35.500] [yakkalog] [info] Found c:\silabs\.yakka\repos\doxybook\doxybook.yakka
+[2023-10-26 13:32:35.500] [yakkalog] [info] Found c:\silabs\.yakka\repos\doxygen\doxygen.yakka
+[2023-10-26 13:32:35.501] [yakkalog] [info] Found c:\silabs\.yakka\repos\gcc_arm\gcc_arm.bob
+[2023-10-26 13:32:35.623] [yakkalog] [info] Found c:\silabs\.yakka\repos\pandoc\pandoc.yakka
+[2023-10-26 13:32:35.647] [yakkalog] [info] Found c:\silabs\.yakka\repos\sonarqube\sonarqube.yakka
+[2023-10-26 13:32:35.648] [yakkalog] [info] Found c:\silabs\.yakka\repos\srecord\srecord.yakka
+[2023-10-26 13:32:35.648] [yakkalog] [info] Found c:\silabs\.yakka\repos\suds\suds.yakka
+[2023-10-26 13:32:35.649] [yakkalog] [info] Found c:\silabs\.yakka\repos\yamlyze\yamlyze.bob
+[2023-10-26 13:32:35.650] [yakkalog] [info] Found c:\silabs\.yakka\repos\yq\yq.bob
+[2023-10-26 13:32:35.651] [yakkalog] [error] Cannot fetch msvc
