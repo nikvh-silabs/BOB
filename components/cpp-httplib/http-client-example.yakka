@@ -1,0 +1,28 @@
+name: http-client-example
+
+sources:
+  - example/client.cpp
+
+requires:
+  components:
+    - openssl
+    - zlib
+    - cpp-httplib
+
+defines:
+  global:
+    - CPPHTTPLIB_OPENSSL_SUPPORT
+    - OPENSSL_SYS_WINDOWS
+
+#supports:
+#  components:
+#    msvc:
+#      flags:
+#        ld:
+#          global:
+#            - /NODEFAULTLIB:MSVCRT
+#            - WS2_32.LIB
+#            - GDI32.LIB
+#            - ADVAPI32.LIB
+#            - CRYPT32.LIB
+#            - USER32.LIB

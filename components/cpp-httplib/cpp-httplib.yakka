@@ -1,0 +1,5 @@
+name: cpp-httplib
+
+includes:
+  global:
+    - .
