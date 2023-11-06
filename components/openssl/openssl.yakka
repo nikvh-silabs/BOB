@@ -5,6 +5,10 @@ flags:
     global:
       - -LIBPATH:"{{curdir()}}"
 
+includes:
+  global:
+    - include
+
 libraries:
   - libssl.lib
   - libcrypto.lib
