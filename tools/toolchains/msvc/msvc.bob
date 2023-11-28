@@ -1,7 +1,7 @@
 name: Microsoft Visual C compiler
 
 tooling:
-  build_tool_path: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.34.31933"
+  build_tool_path: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.37.32822"
   kit:
     path: "C:/Program Files (x86)/Windows Kits/10"
     version: "10.0.22621.0"
@@ -14,7 +14,8 @@ windows_sdk:
 flags:
   cpp:
     global:
-      - /Fm /c /EHsc /Ox /Zi /FS -MT /utf-8 /std:c++20
+      #- /Fm /c /EHsc /Ox /FS -MT /utf-8 /std:c++20
+      - /FS /Zi
       - -I"{{components.msvc.tooling.build_tool_path}}/include" 
       - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/um"
       - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/shared" 
@@ -23,7 +24,7 @@ flags:
 
   ld:
     global:
-      - -SUBSYSTEM:CONSOLE
+      #- -SUBSYSTEM:CONSOLE
       - -MACHINE:x64
       - -OPT:REF
       - -DEBUG:FULL
@@ -94,7 +95,7 @@ blueprints:
     process:
       - create_directory: '{{$(0)}}'
       - inja: "{% set component=at(components,$(1)) %}
-          {% if existsIn(component, \"flags\")%}{% for flag in at(component.flags, $(2)).local %}{{render(flag)}} {% endfor %}{%endif%}
+          {% if existsIn(component, \"flags\") and existsIn(component.flags, $(2)) and existsIn( at(component.flags, $(2)), \"local\") %}{% for flag in at(component.flags, $(2)).local %}{{render(flag)}} {% endfor %}{%endif%}
           {% for include in component.includes.local %}-I{{component.directory}}/{{include}} {% endfor %}
           {% for define in component.defines.local %}-D{{define}} {% endfor %}"
       - save:
