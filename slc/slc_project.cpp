@@ -1,4 +1,5 @@
-#include "slc_project.h"
+#include "slc_project.hpp"
+#include "spdlog.h"
 #include <filesystem>
 #include <unordered_set>
 #include <thread>
@@ -7,10 +8,10 @@
 #include <iostream>
 
 #if defined(_WIN64) || defined(_WIN32) || defined(__CYGWIN__)
-const auto async_launch_option = std::launch::async|std::launch::deferred;
+const auto async_launch_option = std::launch::async | std::launch::deferred;
 #elif defined(__APPLE__)
-const auto async_launch_option = std::launch::async|std::launch::deferred;
-#elif defined (__linux__)
+const auto async_launch_option = std::launch::async | std::launch::deferred;
+#elif defined(__linux__)
 const auto async_launch_option = std::launch::deferred;
 #endif
 
@@ -29,71 +30,51 @@ const auto async_launch_option = std::launch::deferred;
    b. If not the project resolution failed
 */
 
-void slc_project::resolve_project(std::unordered_set<std::string> components)
+void slc_project::resolve_project(std::unordered_set<std::string> components, const slc_sdk &sdk)
 {
-    std::vector<std::string> unsatisified_requirements;
-    std::unordered_set<std::string> requires;
-    std::unordered_set<std::string> provides;
+  std::unordered_set<std::string> unsatisified_requirements;
+  std::unordered_set<std::string> required;
+  std::unordered_set<std::string> recommended;
+  std::unordered_set<std::string> provides;
 
-    // Get the list of unsatisified requirements
-    std::set_difference(requires.begin(), requires.end(), provides.begin(), provides.end(), std::inserter(unsatisified_requirements, unsatisified_requirements.begin()));
+  this->components = components;
 
-    for (const auto& r: unsatisified_requirements)
-    {
-        // Get all the components that provide the requirement
-        auto p = provided_requirements.equal_range(r);
-        for (auto i = p.first; i != p.second; ++i)
-        {
-            // Check conditions
-            if (check_conditions(i->second["provides"][i->first]["conditions"]))
-            {
-                // This component satisifies the requirement. Add to the list
-            }
-        }
+  // Find each component in SDK and create list of requires and provides
+  for (const auto &c: this->components) {
+    if (sdk.database["components"].contains(c)) {
+      const auto component = sdk.database["components"][c];
+      if (component.contains("requires"))
+        for (const auto &r: component["requires"])
+          required.insert(r["name"].get<std::string>());
+      if (component.contains("recommends"))
+        for (const auto &r: component["recommends"])
+          recommended.insert(r["id"].get<std::string>());
+    } else {
+      spdlog::error("Can't find component");
     }
-}
+  }
 
-void slc_project::generate_slcc_database(const std::string path)
-{
-    std::vector< std::future<YAML::Node> > parsed_slcc_files;
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for (const auto& p: std::filesystem::recursive_directory_iterator(path))
-    {
-        if (p.path().filename().extension() == ".slcc")
-        {
-            parsed_slcc_files.push_back( std::async(async_launch_option, [](std::string path) -> YAML::Node {
-                    try {
-                        return YAML::LoadFile( path );
-                    } catch(std::exception& e) {
-                        std::cerr << "Bad YAML: " << path << std::endl;
-                        return {};
-                    }
-                }, p.path().generic_string()));
-        }
-    }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    std::cerr << duration << "ms to find files\n";
+  // Get the list of unsatisified requirements
+  std::set_difference(required.begin(), required.end(), provides.begin(), provides.end(), std::inserter(unsatisified_requirements, unsatisified_requirements.begin()));
 
-    for (auto& i: parsed_slcc_files)
-    {
-        try
-        {
-            YAML::Node result = i.get();
-            if (!result.IsNull() && result["id"])
-            {
-                // Add component to the database
-                slcc_database[result["id"].as<std::string>()] = result;
-                
-                // Add the component 'provides' into the universal multimap to help resolve dependencies
-                if (result["provides"])
-                    for (const auto& p: result["provides"])
-                        provided_requirements.insert( {p["name"].as<std::string>(), result} );
-            }
+  for (const auto &r: unsatisified_requirements) {
+    // Get all the components that provide the requirement
+    if (sdk.database["provides"].contains(r)) {
+      const auto list_of_options = sdk.database["provides"][r];
+      for (const auto &o: list_of_options) {
+        const auto id = o.get<std::string>();
+        if (recommended.contains(id) || list_of_options.size() == 1) {
+          spdlog::error("Found a recommendation!");
+          this->components.insert(id);
         }
-        catch(std::exception& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
+      }
+      //auto p = provided_requirements.equal_range(r);
+      // for (auto i = p.first; i != p.second; ++i) {
+      // Check conditions
+      //   if (check_conditions(i->second["provides"][i->first]["conditions"])) {
+      //     // This component satisifies the requirement. Add to the list
+      //   }
+      // }
     }
+  }
 }

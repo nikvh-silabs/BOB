@@ -1,0 +1,42 @@
+name: SLC
+
+sources:
+  - slc_project.cpp
+  - slc_component.cpp
+  - slc.cpp
+  - slc_sdk.cpp
+
+includes:
+  - .
+
+requires:
+  components:
+    - yaml-cpp
+    - json
+    - spdlog
+    - cxxopts
+
+defines:
+  global:
+    - CXXOPTS_NO_RTTI
+
+supports:
+  components:
+    msvc:
+      defines:
+        global:
+          - _CRT_SECURE_NO_WARNINGS
+      flags:
+        cpp:
+          global:
+            - /c /EHsc /utf-8 /std:c++20
+            - /W4 /wd4100 /wd4267 /wd4706 /wd4702 /wd4244 /GR- /Zc:__cplusplus /GL
+        ld:
+          global:
+            - /LTCG
+            - -SUBSYSTEM:CONSOLE
+    xcode:
+      flags:
+        cpp:
+          global:
+            - -Wno-deprecated-declarations
