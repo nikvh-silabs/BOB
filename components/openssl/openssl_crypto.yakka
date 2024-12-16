@@ -994,17 +994,17 @@ sources:
   - providers\implementations\storemgmt\winstore_store.c
   - ssl\record\methods\ssl3_cbc.c
   - providers\common\der\der_digests_gen.c
-  - providers\common\der\der_dsa_gen.c
+#  - providers\common\der\der_dsa_gen.c
   - providers\common\der\der_dsa_key.c
   - providers\common\der\der_dsa_sig.c
-  - providers\common\der\der_ec_gen.c
+#  - providers\common\der\der_ec_gen.c
   - providers\common\der\der_ec_key.c
   - providers\common\der\der_ec_sig.c
-  - providers\common\der\der_ecx_gen.c
+#  - providers\common\der\der_ecx_gen.c
   - providers\common\der\der_ecx_key.c
-  - providers\common\der\der_rsa_gen.c
+#  - providers\common\der\der_rsa_gen.c
   - providers\common\der\der_rsa_key.c
-  - providers\common\der\der_wrap_gen.c
+#  - providers\common\der\der_wrap_gen.c
   - providers\common\provider_ctx.c
   - providers\common\provider_err.c
   - providers\implementations\ciphers\ciphercommon.c
