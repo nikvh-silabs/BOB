@@ -12,9 +12,18 @@ windows_sdk:
   version: '{{ first( windows_sdk/directory/* ) }}'
 
 flags:
+  c:
+    global:
+      - /Fm /c /EHsc /Ox /Zi /FS -MT /utf-8
+      - -I"{{components.msvc.tooling.build_tool_path}}/include" 
+      - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/um"
+      - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/shared" 
+      - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/ucrt"
+      - -DEBUG:FULL
+
   cpp:
     global:
-      #- /Fm /c /EHsc /Ox /FS -MT /utf-8 /std:c++20
+      - /Fm /c /EHsc /Ox /FS -MT /utf-8 /std:c++20
       - /FS /Zi
       - -I"{{components.msvc.tooling.build_tool_path}}/include" 
       - -I"{{components.msvc.tooling.kit.path}}/Include/{{components.msvc.tooling.kit.version}}/um"
@@ -34,8 +43,10 @@ flags:
       - -LIBPATH:"{{components.msvc.tooling.kit.path}}/Lib/{{components.msvc.tooling.kit.version}}/ucrt/x64"
 
 tools:
+  ar: "lib.exe"
   cl: "cl.exe"
   link: "link.exe"
+  ml: "ml64.exe"
 
 blueprints:
   link:
@@ -65,7 +76,7 @@ blueprints:
           - '/*/sources'
           - '/*/flags/ld/global'
     process:
-      - inja: "-MAP:\"{{project_output}}/{{project_name}}.map\" {% for name,component in components %}{% for flag in component.flags.ld.global %}{{render(flag)}} {% endfor %}{%endfor%} -PDB:\"{{project_output}}/{{project_name}}.pdb\" {% for name, component in components %}{%if existsIn(component,\"sources\") %}{% for source in component/sources %}{{project_output}}/components/{{name}}/{{source}}.o {% endfor %}{% endif %}{% endfor %} Shlwapi.lib"
+      - inja: "-MAP:\"{{project_output}}/{{project_name}}.map\" {% for name,component in components %}{% for flag in component.flags.ld.global %}{{render(flag, component.directory)}} {% endfor %}{%endfor%} -PDB:\"{{project_output}}/{{project_name}}.pdb\" {% for name, component in components %}{%if existsIn(component,\"sources\") %}{% for source in component/sources %}{{project_output}}/components/{{name}}/{{source}}.o {% endfor %}{% endif %}{% endfor %} {% for name, component in components %}{%if existsIn(component,\"libraries\") %}{% for library in component/libraries %}{{library}} {% endfor %}{% endif %}{% endfor %} Shlwapi.lib"
       - save:
     
   global_compiler_options:
@@ -99,3 +110,20 @@ blueprints:
           {% for include in component.includes.local %}-I{{component.directory}}/{{include}} {% endfor %}
           {% for define in component.defines.local %}-D{{define}} {% endfor %}"
       - save:
+  librarify: 
+    depends:
+      - '[{% for name, component in components %}{%if existsIn(component,"sources") %}{{project_output}}/{{name}}.lib, {% endif %}{% endfor %}]'
+
+  library_options:
+    regex: ".+/([^/]*)\\.lib_options"
+    process:
+      - inja: '{% for source in at(components,$(1)).sources %}{{project_output}}/components/{{$(1)}}/{{source}}.o {% endfor %}'
+      - save:
+  component_libraries:
+    regex: ".+/([^/]*)\\.lib"
+    depends:
+      - "[{% for source in at(components,$(1)).sources %}{{project_output}}/components/{{$(1)}}/{{source}}.o, {% endfor %}]"
+      - "{{project_output}}/{{$(1)}}.lib_options"
+    process:
+      - create_directory: "{{$(0)}}"
+      - ar: "@{{project_output}}/{{$(1)}}.lib_options /nologo /out:{{$(0)}}"
